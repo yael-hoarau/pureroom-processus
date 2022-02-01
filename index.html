@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Test Lumière</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+  <button id="ON">ON</button>
+  <button id="OFF">OFF</button>
+  
+</body>
+<script>
+$('#ON').click(function(){
+    console.log('button clicked');
+    $.ajax({url: '/ON', success:function(res){
+        console.log('server response is', res);
+    }});
+});
+
+$('#OFF').click(function(){
+    console.log('button clicked');
+    $.ajax({url: '/OFF', success:function(res){
+        console.log('server response is', res);
+    }});
+});
+</script>
+</html>
