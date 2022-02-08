@@ -56,6 +56,21 @@ module.exports = {
             })
 
         })
+    },
+
+    selectLastScore: function(db){
+        let sql = `SELECT * FROM score ORDER BY time DESC LIMIT 1`;
+
+        return new Promise((resolve, reject) => {
+            let result = []
+            db.each(sql, [], (err, row) => {
+                if(err) { reject(err) }
+                result.push(row)
+                //console.log(row)
+            }, () => {
+                resolve(result)
+            })
+        })
     }
 }
 

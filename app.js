@@ -10,6 +10,9 @@ const sqlite = require('./db')
 const requests = require('./openhab_requests');
 const {launchCron} = require("./cron");
 const {getScore} = require("./score");
+const cors = require("cors")
+
+app.use(cors({origin: '*'}))
 
 // const queryApi = new InfluxDB({url, token}).getQueryApi(org)
 // const fluxQuery = (measurement) => `from(bucket: "ubiquarium")
@@ -35,6 +38,17 @@ app.get('/score', (req, res) => {
     const sqllite_date = Math.floor(new Date().getTime() / 1000);
 
     const pr = sqlite.selectScoreFrom(db, sqllite_date - req.query.period);
+    pr.then(function (tab){
+        res.send(tab);
+    })
+
+    sqlite.close(db);
+});
+
+app.get('/last_score', (req, res) => {
+    const db = sqlite.openReadOnly()
+
+    const pr = sqlite.selectLastScore(db);
     pr.then(function (tab){
         res.send(tab);
     })
