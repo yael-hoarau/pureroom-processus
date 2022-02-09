@@ -63,3 +63,4 @@ app.get('/', (req, res) => {
 app.listen(port)
 
 launchCron()
+console.log('Cron and API launched');
