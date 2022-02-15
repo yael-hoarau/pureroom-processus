@@ -105,10 +105,9 @@ const indoor_co2_status = (indoor_co2_value) => {
 module.exports = {
     getScore: async function () {
         const values = await getValues();
-
         const humidity    = values[0];
-        const temperature = values[1].split(' ')[0];
-        const co2         = values[2].split(' ')[0];
+        const temperature = values[1];
+        const co2         = values[2];
 
         const dewPoint         = getDewPoint(humidity, temperature);
         const dewPointScore    = getDewPointScore(humidity, temperature);

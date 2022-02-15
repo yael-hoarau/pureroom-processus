@@ -1,6 +1,8 @@
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
 const express = require('express')
 const app = express()
-const port = 3001
+const port = 8080
 
 //const {InfluxDB, FluxTableMetaData} = require('@influxdata/influxdb-client')
 const {url, token, org} = require('./env')
