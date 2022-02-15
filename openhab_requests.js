@@ -22,24 +22,9 @@ let config3 = {
     responseType: 'text'
 };
 
-let sensor_co2_list = [
-    {
-        id: 0,
-        name: "IndoorNetatmo02_Co2"
-    }
-]
-let sensor_temperature_list = [
-    {
-        id: 0,
-        name: "MultiSensor02_Temperature"
-    }
-]
-let sensor_humidity_list = [
-    {
-        id: 0,
-        name: "MultiSensor02_Humidity"
-    }
-]
+let sensor_co2_list = require("./sensor_co2.json")
+let sensor_temperature_list = require("./sensor_temperature.json")
+let sensor_humidity_list = require("./sensor_humidity.json")
 
 module.exports = {
     //ACTUATOR
@@ -85,7 +70,7 @@ module.exports = {
             this.getWeather('temperature').then(res=>{resolve(res)}).catch(err=>{reject(err)})
         })
     },
-    getHumidity: async function (){
+    getHumidity: function (){
         return new Promise((resolve, reject)=>{
             this.getWeather('humidity').then(res=>{resolve(res)}).catch(err=>{reject(err)})
         })
