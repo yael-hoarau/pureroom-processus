@@ -1,5 +1,5 @@
 const dotenv = require('dotenv');
-dotenv.config({ path: './.env' });
+dotenv.config({path: './.env'});
 const express = require('express')
 const app = express()
 const port = 8080
@@ -11,7 +11,7 @@ const {url, token, org} = require('./env')
 const sqlite = require('./db')
 const requests = require('./openhab_requests');
 const {launchCron} = require("./cron");
-const {getScore} = require("./score");
+const {getScore, computeScore} = require("./score");
 const cors = require("cors")
 
 app.use(cors({origin: '*'}))
@@ -25,13 +25,13 @@ app.use(cors({origin: '*'}))
 //   |> yield(name: "last")`;
 
 app.get('/ON', (req, res) => {
-	requests.postON();
-	res.send("ON");
+    requests.postON();
+    res.send("ON");
 });
 
 app.get('/OFF', (req, res) => {
-	requests.postOFF();
-	res.send("OFF");
+    requests.postOFF();
+    res.send("OFF");
 });
 
 app.get('/score', (req, res) => {
@@ -40,7 +40,7 @@ app.get('/score', (req, res) => {
     const sqllite_date = Math.floor(new Date().getTime() / 1000);
 
     const pr = sqlite.selectScoreFrom(db, sqllite_date - req.query.period);
-    pr.then(function (tab){
+    pr.then(function (tab) {
         res.send(tab);
     })
 
@@ -51,11 +51,33 @@ app.get('/last_score', (req, res) => {
     const db = sqlite.openReadOnly()
 
     const pr = sqlite.selectLastScore(db);
-    pr.then(function (tab){
+    pr.then(function (tab) {
         res.send(tab);
     })
 
     sqlite.close(db);
+});
+
+function isNumeric(str) {
+    const numericRegExp = /^[-+]?(\d*\.\d+|\d+)$/gm;
+    return !!str && str.match(numericRegExp) !== null;
+}
+
+app.get('/score/calculate', (req, res) => {
+    const {temperature, humidity, co2} = req.query;
+    console.log(req.query);
+
+    if ([temperature, humidity, co2].every(isNumeric)) {
+        getScore(parseFloat(temperature), parseFloat(humidity), parseFloat(co2))
+            .then(score => res.send({ value: parseFloat(score), time: Date.now() }))
+            .catch(err => {
+                res.sendStatus(500);
+            });
+    } else {
+        res.status(400)
+            .send('Bad Request: usage should be ' +
+                'GET /score/calculate?temperature=<NUMBER>&humidity=<NUMBER>&co2=<NUMBER>');
+    }
 });
 
 app.get('/', (req, res) => {
