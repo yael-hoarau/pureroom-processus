@@ -68,8 +68,9 @@ app.get('/score/calculate', (req, res) => {
     console.log(req.query);
 
     if ([temperature, humidity, co2].every(isNumeric)) {
-        getScore(parseFloat(temperature), parseFloat(humidity), parseFloat(co2))
-            .then(score => res.send({ value: parseFloat(score), time: Date.now() }))
+        computeScore({
+            temperature: parseFloat(temperature), humidity: parseFloat(humidity), co2: parseFloat(co2),
+        }).then(score => res.send({value: parseFloat(score), time: Date.now()}))
             .catch(err => {
                 res.sendStatus(500);
             });
